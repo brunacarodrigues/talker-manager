@@ -1,5 +1,6 @@
 const { Router } = require('express');
-const { readTalkerFile, writeTalker, editTalker } = require('../utils/fsUtils');
+const { readTalkerFile, writeTalker, editTalker,
+       deleteTalker } = require('../utils/fsUtils');
 const { validName, validToken, validAge, validTalk,
         validTalkInfos, validRate, validId } = require('../middlewares');
 
@@ -31,10 +32,16 @@ talkerRouter.put('/:id',
     const { id } = req.params;
     const talker = req.body;
 
-    const updateTalker = await editTalker(id, talker);
-    if (!updateTalker) {
+    const updatedTalker = await editTalker(id, talker);
+    if (!updatedTalker) {
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
-    } return res.status(200).json(updateTalker);
+    } return res.status(200).json(updatedTalker);
+});
+
+talkerRouter.delete('/:id', validToken, async (req, res) => {
+    const { id } = req.params;
+    await deleteTalker(id);
+    return res.sendStatus(204);
 });
 
 module.exports = { talkerRouter };
