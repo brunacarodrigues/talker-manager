@@ -1,3 +1,5 @@
+const { readTalkerFile } = require('./utils/fsUtils');
+
 const validEmail = (req, res, next) => {
     const { email } = req.body;
     const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
@@ -87,6 +89,13 @@ const validTalk = (req, res, next) => {
         next();
     };
 
+    const validId = async (req, res, next) => {
+        const { id } = req.params;
+        const talkers = await readTalkerFile();
+        if (talkers.some((el) => el.id === +id)) return next();
+        return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+      };
+
 module.exports = {
     validEmail,
     validPass,
@@ -96,4 +105,5 @@ module.exports = {
     validTalk,
     validTalkInfos,
     validRate,
+    validId,
 };
